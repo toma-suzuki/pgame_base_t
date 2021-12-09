@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+!define _user ユーザー
+!define _server "サーバ (PHP)"
+!define _front "フロント (HTML)"
+!define _game "ゲーム (JavaScript)"
+
+Actor _user
+Database _server
+
+autonumber
+
+_user -> _server : ゲームIDを含んだURLでリクエスト
+_server -> _front : 画面の生成
+_game -> _front : init() の展開
+_front -> _user : 画面の表示
+
+_front -> _front : init() の実行
+_front -> _game : ゲームの初期化/スタート
+note over _front, _game
+  ↑ 画像のロードなどはここで行っている
+  ロードインジケータAPI等もここ
+end note
+_game -> _server : ゲーム開始API
+
+loop
+  _game -> _server : ゲームカウントアップAPI
+  _user -> _game : ゲームのプレイ
+  _game -> _user : ゲームの終了
+  _game -> _server : ゲーム終了API
+  note over _server, _game
+    ↑ SNSシェアAPIなどはこの辺で呼ぶ
+  end note
+end
+
+
+@enduml

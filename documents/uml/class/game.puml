@@ -1,0 +1,96 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package game {
+
+  ' ----- GameController -----
+  class GameController {
+    - game: Game | null
+    + initialize(canvas: HTMLCanvasElement): void
+    + changeScene(sceneName: string): Scene
+    + dispatch(action: Action)
+    + getState()
+  }
+  note top of GameController
+    シングルトンパターン
+    ゲームの外(但しActionを除く)へは、
+    全てGameControllerを経由してアクセスする
+  end note
+  note left of GameController::initialize
+    Game をインスタンス化/初期化
+    Game に Engine/Scene を DI
+  end note
+  note left of GameController::changeScene
+    Game の changeScene をラップ
+  end note
+  note left of GameController::dispatch
+    Store の dispatch をラップ
+  end note
+  note left of GameController::getState
+    Store の getState をラップ
+  end note
+
+  ' ----- Game -----
+  interface GameParam {
+    engine: Engine
+    scenes: GameScene[]
+  }
+  class Game {
+    - engine: Engine
+    - scenes: GameScene[]
+    - currentScene: Scene | null
+    + constructor(param: GameParam)
+    + changeScene(sceneName: string): Scene
+  }
+
+  ' ----- Scene -----
+  abstract class Scene {
+    + {abstract} name: string
+    + willMount(): void
+    + didMount(): void
+    + {abstract} mount(engine: Engine): void
+    + {abstract} unMount(engine: Engine): void
+    + willUnMount(): void
+    + didUnMount(): void
+  }
+  Scene::mount -> Engine
+  Scene::unMount -> Engine
+
+  ' ----- Engine -----
+  interface EventType {
+  }
+  class EventEmitter<T extends EventType> {
+    + emit(eventType: string, payload: any)
+    + on(eventType: string, callback: () => void)
+    + off(callback)
+  }
+  note top of EventEmitter
+    実際にはライブラリを使用する (eventemitter3)
+  end note
+  interface GameEngineEventType {
+    render: (canvas: HTMLCanvasElement) => void
+  }
+  abstract class Engine<StageType> extends EventEmitter {
+    + {abstract} stage: StageType
+    + constructor(canvas: HTMLCanvasElement)
+    + initialize(): void
+    + render(): void
+    + destroy(): void
+  }
+
+  ' ----- Game 内部の依存関係 -----
+  !define _controller GameController
+  !define _game Game
+  !define _scene Scene
+  !define _engine Engine
+
+  Game -up- GameParam
+  EventEmitter - EventType
+  Engine -up- GameEngineEventType
+
+  _controller -up-> _game : インスタンス化
+  Game --up--> _scene : 依存性注入 (DI)
+  Game --up--> _engine : 依存性注入 (DI)
+}
+
+@enduml

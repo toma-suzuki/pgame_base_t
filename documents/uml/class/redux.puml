@@ -1,0 +1,54 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package redux {
+  ' ----- Action -----
+  package action {
+    interface Action<T> {
+      + type: string
+      + payload: T
+    }
+    class ActionCreatorFactory {
+      }
+      class ActionCreator {
+      }
+      Action <- ActionCreator
+      ActionCreator <- ActionCreatorFactory
+  }
+
+  ' ----- Store -----
+  package store {
+    interface GameState {
+      + score: number
+      + state: 'ready' | 'running' | 'pause'
+    }
+    interface EnvState {
+      + mode: 'develop' | 'production'
+      + name: string
+      + version: string
+      + build: number
+    }
+    interface State {
+      + game: GameState
+      + env: EnvState
+    }
+    State -- GameState
+    State -- EnvState
+    class Store<T extends State> {
+      - state: T
+      + dispatch(action: Action): void
+      + getState(): T
+    }
+    Store -- State
+  }
+
+  ' ----- Reducer -----
+  class Reducer {
+  }
+
+  Store::dispatch <-- Action
+  Store::dispatch --> Reducer : Action を渡す
+  Reducer --> Store::state : state を更新
+}
+
+@enduml

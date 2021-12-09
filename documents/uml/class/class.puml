@@ -1,0 +1,15 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+' ----- include -----
+!include ./game.puml
+!include ./redux.puml
+!include ./utility.puml
+!include ./api.puml
+
+' ----- 依存関係 -----
+_controller -- redux
+_controller - api
+'game -- utility
+
+@enduml

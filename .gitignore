@@ -1,0 +1,22 @@
+
+# IDE
+.idea
+.vscode
+
+# dist
+dist
+dist_prod
+dist_dev
+
+# build
+build_prod
+build_dev
+
+# Animate CC Back Up
+リカバリ*
+
+# node
+node_modules/
+
+# tmp
+tmp/

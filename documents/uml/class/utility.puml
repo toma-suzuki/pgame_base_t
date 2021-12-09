@@ -1,0 +1,30 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package utility {
+  class MathHelper {
+    {static} + round(a: number, decimalPoint?: number, mode: 'round' | 'floor' | 'ceil'): number
+    {static} + random(min: number, max: number): number
+    {static} + toString(a: number, option?: { localize?: boolean }): string
+    {static} + toNumber(a: string): number
+    {static} + zeroPadding(a: number, digit: number): string
+  }
+
+  interface CanvasMergerOption {
+    + left?: number
+    + top?: number
+    + width?: number
+    + height?: number
+  }
+  class CanvasMerger {
+    - base: HTMLCanvasElement
+    + constructor(base: HTMLCanvasElement, option: CanvasMergerOption)
+  }
+  CanvasMerger -up-> CanvasMergerOption
+
+  class LogDecorator {
+    + decorate(str: string): string[]
+  }
+}
+
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package api {
+
+  ' ----- Api -----
+  class Connection {
+    + run(api: ApiBase): Promise<Response>
+    - runGet(api: ApiBase)
+    - runPost(api: ApiBase)
+    - runFunction(api: ApiBase)
+  }
+
+  abstract ApiBase<T> {
+    ..static..
+    {static} - commonHost: string
+    {static} + setCommonHost(host: string): void
+    ..field..
+    + method: 'GET' | 'POST' | 'FUNCTION'
+    + protocol: string
+    + host: string
+    + path: string
+    + param: T
+    + func: (e: T) => void
+    ..method..
+    + createUrl(): string
+    + createFormData(): FormData
+  }
+
+  Connection - ApiBase
+
+  !define _connection Connection
+  !define _apiBase ApiBase
+}
+
+@enduml
